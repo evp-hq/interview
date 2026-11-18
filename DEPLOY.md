@@ -19,10 +19,10 @@ Install Composer:
 curl -sS https://getcomposer.org/installer | php && sudo mv composer.phar /usr/local/bin/composer
 ```
 
-Install Node 20+ (needed once, to build the frontend assets):
+Node.js 22 and npm 9 or newer are needed to build the frontend assets. Ubuntu's own `nodejs` and `npm` packages work, so if the server already has them, skip this. Otherwise:
 
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt install -y nodejs
+sudo apt install -y nodejs npm
 ```
 
 ## 2. Get the code
@@ -172,4 +172,3 @@ npm ci && npm run build
 php artisan migrate --force
 php artisan config:cache && php artisan route:cache
 ```
-

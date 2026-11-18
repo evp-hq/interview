@@ -8,7 +8,7 @@ Built with Laravel, Inertia.js, React, TypeScript, Tailwind CSS and shadcn/ui. I
 
 - PHP 8.4 or newer
 - Composer
-- Node.js 20 or newer
+- Node.js 22 or newer (npm 9 or newer)
 - Git
 
 **Easiest path:** install [Laravel Herd](https://herd.laravel.com) ([Windows](https://herd.laravel.com/windows) / [macOS](https://herd.laravel.com)). It installs PHP, Composer and Node for you.
