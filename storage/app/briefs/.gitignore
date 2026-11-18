@@ -1,0 +1,4 @@
+# Real briefs live only on the task server. Never commit them.
+*
+!.gitignore
+!*.example.md
