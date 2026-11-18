@@ -76,6 +76,13 @@ return [
     'home' => '/dashboard',
 
     /*
+     * New users go straight to the PAN details page after signing up.
+     */
+    'redirects' => [
+        'register' => '/pan',
+    ],
+
+    /*
     |--------------------------------------------------------------------------
     | Fortify Routes Prefix / Subdomain
     |--------------------------------------------------------------------------
