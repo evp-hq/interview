@@ -25,12 +25,27 @@ Node.js 22 and npm 9 or newer are needed to build the frontend assets. Ubuntu's 
 sudo apt install -y nodejs npm
 ```
 
+### SQLite on a server that already runs other sites
+
+If PHP is already installed (for example for other projects) and `php artisan migrate` fails with `could not find driver`, add only the SQLite module for the PHP version already in use. This does not change other projects:
+
+```bash
+V=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;') && sudo apt install -y php$V-sqlite3
+```
+
+Check it, then reload PHP-FPM (`reload` lets running requests finish, so other sites stay up):
+
+```bash
+php -m | grep -i sqlite
+sudo systemctl reload php$V-fpm
+```
+
 ## 2. Get the code
 
 ```bash
-sudo mkdir -p /var/www/interview && sudo chown $USER:www-data /var/www/interview
-git clone https://github.com/evp-hq/interview.git /var/www/interview
-cd /var/www/interview
+sudo mkdir -p /var/www/html/interview && sudo chown $USER:www-data /var/www/html/interview
+git clone https://github.com/evp-hq/interview.git /var/www/html/interview
+cd /var/www/html/interview
 composer install --no-dev --optimize-autoloader
 npm ci && npm run build
 ```
@@ -49,15 +64,18 @@ APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://interview.campusvenue.in
 
-TASK_SERVER_URL=https://interview.campusvenue.in
+LOG_LEVEL=error
+DB_CONNECTION=sqlite
+
+TASK_SERVER_URL="${APP_URL}"
 INTERVIEW_SESSION_CODE=pick-a-new-code-per-interview
 ```
 
-Use a code that is hard to guess (e.g. `teal-otter-7391`). Change it before each interview, then run `php artisan config:clear` (or `php artisan config:cache` if you cache config).
+Use a code that is hard to guess (e.g. `teal-otter-7391`). Change it before each interview, then run `php artisan config:cache`.
 
 If `INTERVIEW_SESSION_CODE` is empty, every request is rejected.
 
-Create the database and set permissions:
+Create the SQLite database (answer **yes** if asked to create `database/database.sqlite`) and set permissions:
 
 ```bash
 php artisan migrate --force
@@ -68,18 +86,19 @@ php artisan config:cache && php artisan route:cache
 
 ## 4. Copy the brief files
 
-The real briefs are gitignored, so copy them from your machine:
+The real briefs are gitignored, so they are not in the clone. Create each one on the server and paste its content from your machine:
 
 ```bash
-scp storage/app/briefs/backend.md storage/app/briefs/frontend.md storage/app/briefs/fullstack.md \
-  user@your-vps:/var/www/interview/storage/app/briefs/
+nano /var/www/html/interview/storage/app/briefs/backend.md
 ```
 
-On the server, make them readable by PHP-FPM:
+Copy everything from your local `storage/app/briefs/backend.md`, paste it into nano, then press **Ctrl+O**, **Enter**, **Ctrl+X** to save and exit. Repeat for `frontend.md` and `fullstack.md`.
+
+Make them readable by PHP-FPM:
 
 ```bash
-sudo chown $USER:www-data /var/www/interview/storage/app/briefs/*.md
-sudo chmod 640 /var/www/interview/storage/app/briefs/*.md
+sudo chown $USER:www-data /var/www/html/interview/storage/app/briefs/*.md
+sudo chmod 640 /var/www/html/interview/storage/app/briefs/*.md
 ```
 
 Briefs are read on every request, so you can edit them without restarting anything.
@@ -92,7 +111,7 @@ Create `/etc/nginx/sites-available/interview`:
 server {
     listen 80;
     server_name interview.campusvenue.in;
-    root /var/www/interview/public;
+    root /var/www/html/interview/public;
 
     index index.php;
     charset utf-8;
@@ -152,7 +171,9 @@ curl "https://interview.campusvenue.in/api/brief?role=backend&code=YOUR_CODE"
 
 Wrong code should return `403`. More than 5 requests a minute from one IP returns `429`.
 
-Then, in a local clone, set `TASK_SERVER_URL=https://interview.campusvenue.in` in `.env`, run `composer run dev`, open <http://localhost:8000>, pick a role and enter the code.
+`No brief is available for this role yet.` means the code is right but the `.md` file is missing from `storage/app/briefs/` (step 4).
+
+Then, in a fresh local clone set up as in the README, run `composer run dev`, open <http://localhost:8000>, pick a role and enter the code.
 
 ## Testing the brief API locally
 
@@ -165,7 +186,7 @@ You can run the whole flow on your own machine without a server:
 ## Updating
 
 ```bash
-cd /var/www/interview
+cd /var/www/html/interview
 git pull
 composer install --no-dev --optimize-autoloader
 npm ci && npm run build
