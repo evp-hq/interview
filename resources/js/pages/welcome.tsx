@@ -1,5 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Code2, Layers, Server } from 'lucide-react';
+import { Code2, Server } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getBrief, getRole, roles, setRole } from '@/lib/interview-session';
@@ -9,7 +9,6 @@ import { brief, dashboard, login } from '@/routes';
 const roleIcons: Record<Role, LucideIcon> = {
     backend: Server,
     frontend: Code2,
-    fullstack: Layers,
 };
 
 export default function Welcome() {
@@ -65,7 +64,7 @@ export default function Welcome() {
                         </p>
                     )}
 
-                    <ul className="mt-8 grid gap-4 md:grid-cols-3">
+                    <ul className="mt-8 grid gap-4 md:grid-cols-2">
                         {(Object.keys(roles) as Role[]).map((role) => {
                             const Icon = roleIcons[role];
 

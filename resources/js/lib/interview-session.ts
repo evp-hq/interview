@@ -1,4 +1,4 @@
-export type Role = 'backend' | 'frontend' | 'fullstack';
+export type Role = 'backend' | 'frontend';
 
 export type Brief = {
     role: Role;
@@ -14,10 +14,6 @@ export const roles: Record<Role, { title: string; description: string }> = {
     frontend: {
         title: 'Frontend',
         description: 'React, TypeScript and the browser.',
-    },
-    fullstack: {
-        title: 'Full Stack',
-        description: 'Laravel and React, end to end.',
     },
 };
 

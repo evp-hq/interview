@@ -42,11 +42,14 @@ test('every code is rejected when no session code is configured', function () {
     $this->getJson('/api/brief?role=backend&code=anything')->assertForbidden();
 });
 
-test('an unknown role is rejected', function () {
-    $this->getJson('/api/brief?role=../../.env&code=blue-falcon-42')
+test('an unknown role is rejected', function (string $role) {
+    $this->getJson("/api/brief?role={$role}&code=blue-falcon-42")
         ->assertUnprocessable()
         ->assertJsonValidationErrors('role');
-});
+})->with([
+    'path traversal' => '../../.env',
+    'removed role' => 'fullstack',
+]);
 
 test('a missing brief file returns not found', function () {
     $this->getJson('/api/brief?role=frontend&code=blue-falcon-42')->assertNotFound();

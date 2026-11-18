@@ -38,6 +38,6 @@ return [
 
     'briefs_path' => storage_path('app/briefs'),
 
-    'roles' => ['backend', 'frontend', 'fullstack'],
+    'roles' => ['backend', 'frontend'],
 
 ];

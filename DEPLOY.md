@@ -92,7 +92,7 @@ The real briefs are gitignored, so they are not in the clone. Create each one on
 nano /var/www/html/interview/storage/app/briefs/backend.md
 ```
 
-Copy everything from your local `storage/app/briefs/backend.md`, paste it into nano, then press **Ctrl+O**, **Enter**, **Ctrl+X** to save and exit. Repeat for `frontend.md` and `fullstack.md`.
+Copy everything from your local `storage/app/briefs/backend.md`, paste it into nano, then press **Ctrl+O**, **Enter**, **Ctrl+X** to save and exit. Repeat for `frontend.md`.
 
 Make them readable by PHP-FPM:
 
